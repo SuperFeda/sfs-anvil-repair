@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "net.superfeda.sfs_anvil_repair.mixin",
+    "refmap": "${mod_id}.refmap.json",
+    "compatibilityLevel": "JAVA_18",
+    "mixins": [
+        "AnvilBlockMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
+
