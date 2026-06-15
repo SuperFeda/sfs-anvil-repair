@@ -1,9 +1,9 @@
 package net.superfeda.sfs_anvil_repair.platform;
 
-import net.superfeda.sfs_anvil_repair.platform.services.IPlatformHelper;
-
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
+
+import net.superfeda.sfs_anvil_repair.platform.services.IPlatformHelper;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
 
@@ -19,6 +19,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean isDevelopmentEnvironment() {
-        return !FMLLoader.getCurrent().isProduction();
+        return !FMLLoader.isProduction();
     }
 }

@@ -29,10 +29,10 @@ versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.${mod_id}]]
-modId = "forgeconfigapiport"
-type="required"
-versionRange = "${forgeconfigapiport_version_range}"
-ordering = "NONE"
-side = "BOTH"
+#[[dependencies.${mod_id}]]
+#modId = "forgeconfigapiport"
+#type="required"
+#versionRange = "${forgeconfigapiport_version_range}"
+#ordering = "NONE"
+#side = "BOTH"
 

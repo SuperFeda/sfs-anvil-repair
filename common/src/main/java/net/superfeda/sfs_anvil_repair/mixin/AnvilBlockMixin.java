@@ -4,10 +4,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +34,7 @@ import java.util.Optional;
 public class AnvilBlockMixin {
 
     @Inject(
-            method = "useItemOn(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;",
+            method = "useItemOn(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/ItemInteractionResult;",
             at = @At("HEAD"),
             cancellable = true
     )
@@ -46,28 +46,28 @@ public class AnvilBlockMixin {
             Player player,
             InteractionHand hand,
             BlockHitResult hitResult,
-            CallbackInfoReturnable<InteractionResult> cir
+            CallbackInfoReturnable<ItemInteractionResult> cir
     ) {
         Block anvilBlock = state.getBlock();
         if (anvilBlock != Blocks.CHIPPED_ANVIL && anvilBlock != Blocks.DAMAGED_ANVIL) {
-            cancelWithResult(InteractionResult.TRY_WITH_EMPTY_HAND, cir);
+            cancelWithResult(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION, cir);
             return;
         }
 
-        Identifier repairItemId = Identifier.tryParse(SFsAnvilRepairConfig.REPAIR_ITEM.get());
+        ResourceLocation repairItemId = ResourceLocation.tryParse(SFsAnvilRepairConfig.REPAIR_ITEM.get());
         if (repairItemId == null) {
-            cancelWithResult(InteractionResult.TRY_WITH_EMPTY_HAND, cir);
+            cancelWithResult(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION, cir);
             return;
         }
 
-        Optional<Holder.Reference<Item>> repairItem = BuiltInRegistries.ITEM.get(repairItemId);
+        Optional<Holder.Reference<Item>> repairItem = BuiltInRegistries.ITEM.getHolder(repairItemId);
         if (repairItem.isEmpty()) {
-            cancelWithResult(InteractionResult.TRY_WITH_EMPTY_HAND, cir);
+            cancelWithResult(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION, cir);
             return;
         }
 
         if (repairItem.get().value() != stack.getItem()) {
-            cancelWithResult(InteractionResult.TRY_WITH_EMPTY_HAND, cir);
+            cancelWithResult(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION, cir);
             return;
         }
 
@@ -77,7 +77,7 @@ public class AnvilBlockMixin {
                     Component.translatable("clientMessage.sfs_anvil_repair.lessUsageCost", usageCost),
                     true
             );
-            cancelWithResult(InteractionResult.FAIL, cir);
+            cancelWithResult(ItemInteractionResult.FAIL, cir);
             return;
         }
 
@@ -99,15 +99,16 @@ public class AnvilBlockMixin {
 
             level.playSound(null, pos, SoundEvents.IRON_GOLEM_REPAIR, player.getSoundSource(), 1.0F, 1.0F);
 
-            cancelWithResult(InteractionResult.SUCCESS, cir);
+            cancelWithResult(ItemInteractionResult.SUCCESS, cir);
             return;
         }
 
-        cancelWithResult(InteractionResult.TRY_WITH_EMPTY_HAND, cir);
+        cancelWithResult(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION, cir);
+        return;
     }
 
     @Unique
-    private static void cancelWithResult(InteractionResult result, CallbackInfoReturnable<InteractionResult> cir) {
+    private static void cancelWithResult(ItemInteractionResult result, CallbackInfoReturnable<ItemInteractionResult> cir) {
         cir.setReturnValue(result);
         cir.cancel();
     }

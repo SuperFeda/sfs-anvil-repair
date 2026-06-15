@@ -1,6 +1,5 @@
 package net.superfeda.sfs_anvil_repair.platform.services;
 
-
 public interface IPlatformHelper {
 
     /**
